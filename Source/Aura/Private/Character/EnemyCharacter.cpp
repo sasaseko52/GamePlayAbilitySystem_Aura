@@ -3,11 +3,12 @@
 
 #include "Character/EnemyCharacter.h"
 #include "DrawDebugHelpers.h"
-#include "SNegativeActionButton.h"
+#include "Aura/Aura.h"
+
 
 AEnemyCharacter::AEnemyCharacter()
 {
-	
+	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility,ECR_Block);
 	
 	
 }
@@ -15,15 +16,18 @@ AEnemyCharacter::AEnemyCharacter()
 void AEnemyCharacter::HighLightActor()
 {
 	
-	DrawDebugSphere(GetWorld(),GetActorLocation(),50,24,FColor::Red,false,15,0,2);
-	UE_LOG(LogTemp,Warning,TEXT("ssssss"));
+
+	GetMesh()->SetRenderCustomDepth(true);
+	GetMesh()->SetCustomDepthStencilValue(Red_Custom_Depth);
+	Weapon->SetRenderCustomDepth(true);
+	Weapon->SetCustomDepthStencilValue(Red_Custom_Depth);
 }
 
 void AEnemyCharacter::UnHighLightActor()
 {
 
-
-
+	GetMesh()->SetRenderCustomDepth(false);
+	Weapon->SetRenderCustomDepth(false);
 
 	
 }
