@@ -8,7 +8,7 @@
 
 AEnemyCharacter::AEnemyCharacter()
 {
-	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility,ECR_Block);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility,ECR_Block); 
 	
 	
 }
