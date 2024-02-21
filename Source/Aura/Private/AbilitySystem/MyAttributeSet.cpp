@@ -11,7 +11,7 @@ UMyAttributeSet::UMyAttributeSet()
 	InitMaxHealth(100.f);
 	InitMana(100.f);
 	InitMaxMana(100.f);
-
+	InitDamage(200.f);
 	
 }
 
@@ -23,6 +23,7 @@ void UMyAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	DOREPLIFETIME_CONDITION_NOTIFY(UMyAttributeSet,MaxHealth, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMyAttributeSet,Mana,COND_None,REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UMyAttributeSet,MaxMana,COND_None,REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UMyAttributeSet,Damage,COND_None,REPNOTIFY_Always);
 }
 
 
@@ -49,4 +50,9 @@ void UMyAttributeSet::OnRep_Mana(const FGameplayAttributeData& OldMana) const
 void UMyAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UMyAttributeSet,MaxMana,OldMaxMana);
+}
+
+void UMyAttributeSet::OnRep_Damage(const FGameplayAttributeData& OldDamage)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UMyAttributeSet,Damage,OldDamage);
 }

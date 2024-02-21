@@ -50,4 +50,11 @@ public:
 	ATTRIBUTE_ACCESSORS(UMyAttributeSet,MaxMana);
 	UFUNCTION()
 	void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const;
+
+	//Damage
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing= OnRep_Damage)
+	FGameplayAttributeData Damage;
+	ATTRIBUTE_ACCESSORS(UMyAttributeSet,Damage);
+	UFUNCTION()
+	void OnRep_Damage(const FGameplayAttributeData& OldDamage);
 };
