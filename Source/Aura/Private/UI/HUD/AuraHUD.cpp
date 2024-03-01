@@ -11,7 +11,10 @@ UOverlayWidgetController* AAuraHUD::GetOverlayWidgetController(const FWidgetCont
 	{
 		OverlayWidgetController = NewObject<UOverlayWidgetController>(this,OverlayWidgetControllerClass);
 		OverlayWidgetController->SetWidgetControllerParams(WCParams);
-
+		
+		//Bind callbacks to the widget for the sake of passing new values if changed to the overlay widget
+		OverlayWidgetController->BindCallbackToDependencies();
+		
 		return OverlayWidgetController;
 	}
 	return OverlayWidgetController;
@@ -22,15 +25,22 @@ void AAuraHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySyst
 {
 	checkf(OverlayWidgetClass, TEXT("Overlay Widget Class UnInitialized, please fill out bp aura HUD"));
 	checkf(OverlayWidgetControllerClass, TEXT("Overlay Widget Controller Class UnInitialized , please fill out bp aura HUD"));
-	
+
+	//create overlay widget
 	UUserWidget* Widget	= CreateWidget<UUserWidget>(GetWorld(),OverlayWidgetClass);
 	OverlayWidget = Cast<UAuraUserWidget>(Widget);
-
+	
+	//create widget controller params struct
 	const FWidgetControllerParams WidgetControllerParams(PC,PS,ASC,AS);
 	
+	//create widget controller and assign its params for the overlay widget
 	UOverlayWidgetController* WidgetController = GetOverlayWidgetController(WidgetControllerParams);
-
+	
+	//Set controller for the overlay widget
 	OverlayWidget->SetWidgetController(WidgetController);
+	
+	//broad cast delegate for initial values
+	WidgetController->BroadcastInitialValues();
 	
 	Widget->AddToViewport();
 

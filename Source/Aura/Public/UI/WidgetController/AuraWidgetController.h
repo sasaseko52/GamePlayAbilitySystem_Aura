@@ -50,7 +50,10 @@ public:
 	// called after initialization of any widget controller
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FWidgetControllerParams& WCParams);
-	
+
+	virtual void BroadcastInitialValues();
+
+	virtual void BindCallbackToDependencies();
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
 	TObjectPtr<APlayerController> PlayerController;
@@ -62,5 +65,7 @@ protected:
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
 	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
-	TObjectPtr<UAttributeSet> AttributeSet; 
+	TObjectPtr<UAttributeSet> AttributeSet;
+
+	
 };
