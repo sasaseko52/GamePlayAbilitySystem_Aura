@@ -13,6 +13,34 @@
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+USTRUCT(BlueprintType)
+struct FEffectProperties
+{
+	GENERATED_BODY()
+	FEffectProperties(){};
+	
+	FGameplayEffectContextHandle EffectContextHandle;
+	
+	//Source info
+	UPROPERTY()
+	UAbilitySystemComponent* SourceAbilitySystemComponent = nullptr;
+	UPROPERTY()
+	AActor* SourceAvatarActor = nullptr;
+	UPROPERTY()
+	AController* SourceController = nullptr;
+	UPROPERTY()
+	ACharacter* SourceCharacter = nullptr;
+	
+	//Taregt info
+	UPROPERTY()
+	UAbilitySystemComponent* TargetAbilitySystemComponent = nullptr;
+	UPROPERTY()
+	AActor* TargetAvatarActor = nullptr;
+	UPROPERTY()
+	AController* TargetController = nullptr;
+	UPROPERTY()
+	ACharacter* TargetCharacter = nullptr;
+};
 
 UCLASS()
 class AURA_API UMyAttributeSet : public UAttributeSet
@@ -22,7 +50,13 @@ public:
 	UMyAttributeSet();
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	// make an opportunity to make calculation before changing attribute numerical values such as clamping
+	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
+	
+	//
+	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
+	
 	//Health
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category= "Vital Attributes")
 	FGameplayAttributeData Health;
@@ -57,4 +91,9 @@ public:
 	ATTRIBUTE_ACCESSORS(UMyAttributeSet,Damage);
 	UFUNCTION()
 	void OnRep_Damage(const FGameplayAttributeData& OldDamage);
+
+	//Handel effect properties
+
+private:
+	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props);
 };

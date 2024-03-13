@@ -36,7 +36,7 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 	EffectContextHandle.AddSourceObject(this);
 	
 	//make  spec handle in the blueprint to apply this effect to different targets in the multiple times
-	const FGameplayEffectSpecHandle EffectSpec = TargetAbilitySystemComponent->MakeOutgoingSpec(GameplayEffectClass,1.f,EffectContextHandle);
+	const FGameplayEffectSpecHandle EffectSpec = TargetAbilitySystemComponent->MakeOutgoingSpec(GameplayEffectClass,ActorLevel,EffectContextHandle); 
 
 	
 	//get the t-shared pointer of data from effect spec struct then de-reference it by * then store it in a struct and (Apply it to target)
@@ -49,6 +49,7 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 	if(bIsInfinite && InfiniteEffectRemovalPolicy == EEffectRemovalPolicy::RemoveOnEndOverlap)
 	{
 		 ActiveEffectHandles.Add(ActiveEffectHandle,TargetAbilitySystemComponent);
+	
 	}
 }
 

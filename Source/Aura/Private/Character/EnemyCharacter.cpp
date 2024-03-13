@@ -22,9 +22,15 @@ AEnemyCharacter::AEnemyCharacter()
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	check(AbilitySystemComponent);
-	AbilitySystemComponent->InitAbilityActorInfo(this,this);
+
+	InitAbilityActorInfo();
 	
+}
+
+void AEnemyCharacter::InitAbilityActorInfo()
+{
+	AbilitySystemComponent->InitAbilityActorInfo(this,this);
+	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 }
 
 void AEnemyCharacter::HighLightActor()

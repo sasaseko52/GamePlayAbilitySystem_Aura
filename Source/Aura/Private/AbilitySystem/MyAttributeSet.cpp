@@ -2,7 +2,10 @@
 
 
 #include "AbilitySystem/MyAttributeSet.h"
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Net/UnrealNetwork.h"
+#include "GameFramework/Character.h"
+#include "GameplayEffectExtension.h"
 
 UMyAttributeSet::UMyAttributeSet()
 {
@@ -26,6 +29,65 @@ void UMyAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	DOREPLIFETIME_CONDITION_NOTIFY(UMyAttributeSet,Damage,COND_None,REPNOTIFY_Always);
 }
 
+void UMyAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
+{
+	Super::PreAttributeChange(Attribute, NewValue);
+	
+	if(Attribute == GetHealthAttribute())
+	{
+		NewValue =FMath::Clamp(NewValue, 0 , GetMaxHealth());
+	}
+	
+	if(Attribute == GetManaAttribute())
+	{
+		NewValue =FMath::Clamp(NewValue, 0 , GetMaxMana());
+	}
+}
+void UMyAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props)
+{
+	//source  = causer of the effect , target = target of th effect (owner of this attribute set)
+	
+	Props.EffectContextHandle = Data.EffectSpec.GetContext();
+	
+	//Get Source Info ( AvatarActor , Controller, Character and Ability System Component)
+	Props.SourceAbilitySystemComponent = Props.EffectContextHandle.GetInstigatorAbilitySystemComponent();
+	
+	if(IsValid(Props.SourceAbilitySystemComponent) && Props.SourceAbilitySystemComponent->AbilityActorInfo.IsValid() && Props.SourceAbilitySystemComponent->AbilityActorInfo->AvatarActor.IsValid())
+	{
+		Props.SourceAvatarActor = Props.SourceAbilitySystemComponent->AbilityActorInfo->AvatarActor.Get();
+		Props.SourceController = 	Props.SourceAbilitySystemComponent->AbilityActorInfo->PlayerController.Get();
+		if(Props.SourceController == nullptr && Props.SourceAvatarActor != nullptr)
+		{
+			if(const APawn* Pawn = Cast<APawn>(Props.SourceAvatarActor))
+			{
+				Props.SourceController = Pawn->GetController();
+			}
+		}
+		if(Props.SourceController)
+		{
+			Props.SourceCharacter = Cast<ACharacter>(Props.SourceController->GetPawn());
+		}
+	}
+
+	
+	//Get Target Info ( AvatarActor , Controller, Character and Ability System Component)
+	if(Data.Target.AbilityActorInfo.IsValid() &&Data.Target.AbilityActorInfo->AvatarActor.IsValid())
+	{
+		Props.TargetAvatarActor = Data.Target.AbilityActorInfo->AvatarActor.Get();
+		Props.TargetController = Data.Target.AbilityActorInfo->PlayerController.Get();
+		Props.TargetCharacter = Cast<ACharacter>(Props.TargetAvatarActor);
+		Props.TargetAbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Props.TargetAvatarActor);
+	}
+}
+
+void UMyAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
+{
+	Super::PostGameplayEffectExecute(Data);
+	FEffectProperties EffectProps;
+	SetEffectProperties(Data, EffectProps);
+	
+	
+}
 
 
 void UMyAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
@@ -56,3 +118,5 @@ void UMyAttributeSet::OnRep_Damage(const FGameplayAttributeData& OldDamage)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UMyAttributeSet,Damage,OldDamage);
 }
+
+
