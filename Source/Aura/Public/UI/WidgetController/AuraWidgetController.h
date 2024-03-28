@@ -24,7 +24,7 @@ struct FWidgetControllerParams
 		AbilitySystemComponent = ASC;
 		AttributeSet = AS;
 	}
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<APlayerController> PlayerController = nullptr;
 	
