@@ -2,8 +2,11 @@
 
 
 #include "Player/AuraPlayerController.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "EnhancedInputSubsystems.h"
-#include "EnhancedInputComponent.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "Input/AuraInputComponent.h"
 #include "Inteactions/EnemyInterface.h"
 
 
@@ -57,12 +60,38 @@ void AAuraPlayerController::CursorTrace()
 	
 }
 
+void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
+{
+	//GEngine->AddOnScreenDebugMessage(1,3.f,FColor::Black,*InputTag.ToString());
+	
+}
+
+void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
+{
+	if(GetAuraAbilitySystemComponent() == nullptr) return;
+	GetAuraAbilitySystemComponent()->AbilityInputTagReleased(InputTag);
+}
+
+void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
+{
+	if(GetAuraAbilitySystemComponent() == nullptr) return;
+	GetAuraAbilitySystemComponent()->AbilityInputTagHeld(InputTag);
+}
+
+UAuraAbilitySystemComponent* AAuraPlayerController::GetAuraAbilitySystemComponent()
+{
+	if(AuraAbilitySystemComponent == nullptr)
+	{
+		AuraAbilitySystemComponent = Cast<UAuraAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>()));
+	}
+	return AuraAbilitySystemComponent;
+}
+
+
 void AAuraPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	check(AuraContext); /// checking if this ptr is valid before player the game
-
-
 	
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
 	if(Subsystem)
@@ -83,12 +112,11 @@ void AAuraPlayerController::BeginPlay()
 void AAuraPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
+	UAuraInputComponent* AuraInputComponent = CastChecked<UAuraInputComponent>(InputComponent);
 	
-	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
+	AuraInputComponent->BindAction(MoveAction,ETriggerEvent::Triggered,this,&AAuraPlayerController::Move);
 	
-	EnhancedInputComponent->BindAction(MoveAction,ETriggerEvent::Triggered,this,&AAuraPlayerController::Move);
-
-
+	AuraInputComponent->BindAbilityAction(InputConfig,this,&AAuraPlayerController::AbilityInputTagPressed,&AAuraPlayerController::AbilityInputTagReleased,&AAuraPlayerController::AbilityInputTagHeld);
 	
 }
 

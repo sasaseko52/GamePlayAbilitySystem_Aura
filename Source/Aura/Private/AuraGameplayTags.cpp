@@ -38,4 +38,13 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Attributes_Secondary_HealthRegeneration = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.HealthRegeneration"),FString("Amount of Health regenerated every second"));
 
 	GameplayTags.Attributes_Secondary_ManaRegeneration = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.ManaRegeneration"),FString("Amount of Mana regenerated every second"));
+
+	//Input Tags
+	
+	GameplayTags.InputTag_LMB = UGameplayTagsManager::Get().AddNativeGameplayTag((FName("InputTag.LMB")),FString("Left Mouse Button"));
+	GameplayTags.InputTag_RMB = UGameplayTagsManager::Get().AddNativeGameplayTag((FName("InputTag.RMB")),FString("Right Mouse Button"));
+	GameplayTags.InputTag_1 = UGameplayTagsManager::Get().AddNativeGameplayTag((FName("InputTag.1")),FString("One Key"));
+	GameplayTags.InputTag_2 = UGameplayTagsManager::Get().AddNativeGameplayTag((FName("InputTag.2")),FString("Two Key"));
+	GameplayTags.InputTag_3 = UGameplayTagsManager::Get().AddNativeGameplayTag((FName("InputTag.3")),FString("Three Key"));
+	GameplayTags.InputTag_4 = UGameplayTagsManager::Get().AddNativeGameplayTag((FName("InputTag.4")),FString("Four Key"));
 }
