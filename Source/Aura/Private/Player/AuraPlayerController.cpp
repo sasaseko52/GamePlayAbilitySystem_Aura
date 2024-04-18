@@ -28,6 +28,25 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 	AutoRun();
 	
 }
+void AAuraPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+	check(AuraContext); /// checking if this ptr is valid before player the game
+	
+	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+	if(Subsystem)
+	{
+		Subsystem->AddMappingContext(AuraContext,0);
+	}
+	
+	DefaultMouseCursor = EMouseCursor::Hand;
+	bShowMouseCursor = true;
+	
+	FInputModeGameAndUI InputModeData;
+	InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	InputModeData.SetHideCursorDuringCapture(false);
+	SetInputMode(InputModeData);
+}
 void AAuraPlayerController::AutoRun()
 {
 	if(!bAutoRunning) return;
@@ -78,19 +97,18 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 
 void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
-	//Release Any Button but not LMB
+	//if the released input is not the LMB
 	if  (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
 		if(GetAuraAbilitySystemComponent()) GetAuraAbilitySystemComponent()->AbilityInputTagReleased(InputTag);
-		
 		return;
 	}
-	//Releasing LMB And Targeting Enemy
-	if(bTargeting)
-	{
-		if(GetAuraAbilitySystemComponent()) GetAuraAbilitySystemComponent()->AbilityInputTagReleased(InputTag);
-	}
-	else 
+	//Released LMB & Targeting Enemy
+	if(GetAuraAbilitySystemComponent()) GetAuraAbilitySystemComponent()->AbilityInputTagReleased(InputTag);
+	
+	
+	// not Targeting Enemy && not holding shift
+	if(!bTargeting && !bShiftPressed)
 	{
 		//Short press LMB
 		APawn* ControlledPawn = GetPawn();
@@ -112,6 +130,7 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 			}
 		}
 	}
+
 	//Reset time and boolean after releasing LMB
 	FollowTime = 0.f;
 	bTargeting = false;
@@ -125,7 +144,7 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 		if(GetAuraAbilitySystemComponent()) GetAuraAbilitySystemComponent()->AbilityInputTagHeld(InputTag);
 		return;
 	}
-	if(bTargeting) //Holding LMB And Targeting Enemy
+	if(bTargeting || bShiftPressed) //Holding LMB And Targeting Enemy
 	{
 		if(GetAuraAbilitySystemComponent())	GetAuraAbilitySystemComponent()->AbilityInputTagHeld(InputTag);
 		
@@ -156,35 +175,16 @@ UAuraAbilitySystemComponent* AAuraPlayerController::GetAuraAbilitySystemComponen
 	return AuraAbilitySystemComponent;
 }
 
-
-
-
-void AAuraPlayerController::BeginPlay()
-{
-	Super::BeginPlay();
-	check(AuraContext); /// checking if this ptr is valid before player the game
-	
-	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	if(Subsystem)
-	{
-		Subsystem->AddMappingContext(AuraContext,0);
-	}
-	
-	DefaultMouseCursor = EMouseCursor::Hand;
-	bShowMouseCursor = true;
-	
-	FInputModeGameAndUI InputModeData;
-	InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-	InputModeData.SetHideCursorDuringCapture(false);
-	SetInputMode(InputModeData);
-}
-
 void AAuraPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 	UAuraInputComponent* AuraInputComponent = CastChecked<UAuraInputComponent>(InputComponent);
 	
 	AuraInputComponent->BindAction(MoveAction,ETriggerEvent::Triggered,this,&AAuraPlayerController::Move);
+	
+	AuraInputComponent->BindAction(ShiftAction,ETriggerEvent::Started,this,&AAuraPlayerController::ShiftPressed); // LMB
+	
+	AuraInputComponent->BindAction(ShiftAction,ETriggerEvent::Completed,this,&AAuraPlayerController::ShiftReleased); // LMB
 	
 	AuraInputComponent->BindAbilityAction(InputConfig,this,&AAuraPlayerController::AbilityInputTagPressed,&AAuraPlayerController::AbilityInputTagReleased,&AAuraPlayerController::AbilityInputTagHeld);
 	
@@ -206,8 +206,6 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 		ControlledPawn->AddMovementInput(ForwardDirection,InputAxisVector.Y);												//Fwd & Bwd in the y component of W S keys
 		ControlledPawn->AddMovementInput(RightDirection,InputAxisVector.X);													//right & left in the y component of A D keys
 	}
-
-	
-	
 }
+
 

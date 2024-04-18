@@ -3,6 +3,7 @@
 
 #include "AuraAssetManager.h"
 #include "AuraGameplayTags.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 
 UAuraAssetManager& UAuraAssetManager::Get()
 {
@@ -15,8 +16,9 @@ void UAuraAssetManager::StartInitialLoading()
 {
 	Super::StartInitialLoading();
 	//Calling initialization Function from C++ Native class AuraGameplayTags
-	
 	FAuraGameplayTags::InitializeNativeGameplayTags();
+
+	//UAbilitySystemGlobals::InitGlobalsData(); only in (UE 5.1)
 
 
 	

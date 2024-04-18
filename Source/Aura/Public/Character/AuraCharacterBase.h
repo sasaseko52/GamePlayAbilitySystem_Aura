@@ -23,13 +23,15 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	
 	UAttributeSet* GetAttributeSet() const {return AttributeSet;}
+
+	
 protected:
 	
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo();
 	void InitializeDefaultAttributes();
 	void ApplyGameplayEffectToSelf(TSubclassOf<UGameplayEffect> GamePlayEffectClass , float Level);
-	void AddCharacterAbilties();
+	void AddCharacterAbilities();
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
 	
@@ -38,10 +40,17 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
-	
+	//Weapon 
 	UPROPERTY(EditAnywhere, Category= "Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
+	
+	UPROPERTY(EditAnywhere, Category= "Combat")
+	FName WeaponTipSocketName;
 
+	virtual FVector GetCombatSocketLocation() override;
+	///Weapon End
+	///
+	
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 

@@ -30,10 +30,14 @@ private:
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<UInputAction> MoveAction;
 	
-
+	UPROPERTY(EditAnywhere, Category="Input")
+	TObjectPtr<UInputAction> ShiftAction;
 	
 	void Move(const struct FInputActionValue& InputActionValue);
-	
+
+	void ShiftPressed() {bShiftPressed = true;}
+	void ShiftReleased() {bShiftPressed = false;}
+	bool bShiftPressed = false;
 	//Hit Result 
 	void CursorTrace();
 	TObjectPtr<IEnemyInterface> ThisActor;

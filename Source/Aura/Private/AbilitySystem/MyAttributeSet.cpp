@@ -119,6 +119,7 @@ void UMyAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 	if(Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(),0.f,GetMaxHealth()));
+		UE_LOG(LogTemp,Warning,TEXT("Health : %f , --> %s"),GetHealth(),*EffectProps.TargetCharacter->GetName());
 	}
 	if(Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
