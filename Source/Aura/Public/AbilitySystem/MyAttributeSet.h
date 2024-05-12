@@ -184,8 +184,44 @@ public:
 	void OnRep_Mana(const FGameplayAttributeData& OldMana) const;
 	
 	
+	/* Meta Attributes*/
+	//Damage  meta Attribute
+	UPROPERTY(BlueprintReadOnly, Category= "Meta Attributes")
+	FGameplayAttributeData IncomingDamage;
+	ATTRIBUTE_ACCESSORS(UMyAttributeSet,IncomingDamage);
 
+	/* Resistance Attributes*/
+
+	UPROPERTY(BlueprintReadOnly,ReplicatedUsing= OnRep_FireResistance,Category= "Resistacne Attributes")
+	FGameplayAttributeData FireResistance;
+	ATTRIBUTE_ACCESSORS(UMyAttributeSet,FireResistance);
+	UFUNCTION()
+	void OnRep_FireResistance(const FGameplayAttributeData& OldFireResistance) const;
+
+	UPROPERTY(BlueprintReadOnly,ReplicatedUsing= OnRep_LightingResistance,Category= "Resistacne Attributes")
+	FGameplayAttributeData LightingResistance;
+	ATTRIBUTE_ACCESSORS(UMyAttributeSet,LightingResistance);
+	UFUNCTION()
+	void OnRep_LightingResistance(const FGameplayAttributeData& OldLightingResistance) const;
+
+	UPROPERTY(BlueprintReadOnly,ReplicatedUsing= OnRep_ArcaneResistance,Category= "Resistacne Attributes")
+	FGameplayAttributeData ArcaneResistance;
+	ATTRIBUTE_ACCESSORS(UMyAttributeSet,ArcaneResistance);
+	UFUNCTION()
+	void OnRep_ArcaneResistance(const FGameplayAttributeData& OldArcaneResistance)const;
+
+	UPROPERTY(BlueprintReadOnly,ReplicatedUsing= OnRep_PhysicalResistance,Category= "Resistacne Attributes")
+	FGameplayAttributeData PhysicalResistance;
+	ATTRIBUTE_ACCESSORS(UMyAttributeSet,PhysicalResistance);
+	UFUNCTION()
+	void OnRep_PhysicalResistance(const FGameplayAttributeData& OldPhysicalResistance)const;
+
+	
+
+	
 private:
 	//Handel effect properties
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props);
+	
+	void ShowFloatingText(const FEffectProperties& Props,float DamageText, bool bBlockedHit, bool bCriticalHit);
 };

@@ -2,10 +2,10 @@
 
 
 #include "AbilitySystem/Ability/AuraProjectileSpell.h"
-
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "Actor/AuraProjectile.h"
+#include "AuraGameplayTags.h"
 #include "Inteactions/CombatInterface.h"
 
 
@@ -44,9 +44,26 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 
 		//Giving Projectile Effect Spec for causing Damage 
 		const UAbilitySystemComponent* SourceAbilitySystemComponent= UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
-		
-		const FGameplayEffectSpecHandle SpecHandle = SourceAbilitySystemComponent->MakeOutgoingSpec(DamageEffectClass,GetAbilityLevel(),SourceAbilitySystemComponent->MakeEffectContext());
 
+		//SetEffectProperties() in AttributeSet
+		FGameplayEffectContextHandle EffectContextHandle = SourceAbilitySystemComponent->MakeEffectContext();
+	
+		EffectContextHandle.SetAbility(this);
+		EffectContextHandle.AddSourceObject(SpawnedProjectile);
+		TArray<TWeakObjectPtr<AActor>> Actors;
+		Actors.Add(SpawnedProjectile);
+		EffectContextHandle.AddActors(Actors);
+		FHitResult HitResult;
+		EffectContextHandle.AddHitResult(HitResult);
+		
+		const FGameplayEffectSpecHandle SpecHandle = SourceAbilitySystemComponent->MakeOutgoingSpec(DamageEffectClass,GetAbilityLevel(),EffectContextHandle);
+		
+		for(TPair<FGameplayTag,FScalableFloat> DamagePair : DamageType)
+		{
+			const float ScaledDamage = DamagePair.Value.GetValueAtLevel(GetAbilityLevel());
+			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle,DamagePair.Key,ScaledDamage);
+		}
+		
 		SpawnedProjectile->DamageEffectSpecHandle = SpecHandle;
 		
 		SpawnedProjectile->FinishSpawning(SpawnTransform);
