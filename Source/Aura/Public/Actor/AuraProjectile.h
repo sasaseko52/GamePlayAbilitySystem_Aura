@@ -30,14 +30,16 @@ protected:
 	virtual void Destroyed() override;
 	UFUNCTION()
 	void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<USphereComponent> CollisionSphere;
 private:
 	bool bHit = false;
 	
 	UPROPERTY(EditDefaultsOnly)
 	float LifeSpan = 15.f;
 	
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<USphereComponent> CollisionSphere;
+	
 
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<USoundBase> ImpactSound;

@@ -33,7 +33,7 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 
 void AAuraPlayerController::ShowDamageNubmer_Implementation(float DamageAmount,  ACharacter* Target,bool bBloacked, bool bCritical)
 {
-	if(IsValid(Target) && DamageTextComponentClass)
+	if(IsValid(Target) && DamageTextComponentClass && IsLocalController())
 	{
 		UDamageTextComponent* DamageText= NewObject<UDamageTextComponent>(Target,DamageTextComponentClass);
 		DamageText->RegisterComponent();
@@ -140,9 +140,11 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 					Spline->AddSplinePoint(PointLoc,ESplineCoordinateSpace::World);
 					DrawDebugSphere(GetWorld(),PointLoc, 8.f,8,FColor::Black,false,5.f);
 				}
-				CachedDestination = NavigationPath->PathPoints[NavigationPath->PathPoints.Num() - 1]; // reset Destination to the last point of the spline
-				bAutoRunning = true;
-				
+				if(NavigationPath->PathPoints.Num() > 0)
+				{
+					CachedDestination = NavigationPath->PathPoints[NavigationPath->PathPoints.Num() - 1]; // reset Destination to the last point of the spline
+					bAutoRunning = true;
+				}
 			}
 		}
 	}

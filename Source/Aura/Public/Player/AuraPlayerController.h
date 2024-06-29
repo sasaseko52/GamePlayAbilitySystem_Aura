@@ -44,8 +44,8 @@ private:
 	bool bShiftPressed = false;
 	//Hit Result 
 	void CursorTrace();
-	TObjectPtr<IEnemyInterface> ThisActor;
-	TObjectPtr<IEnemyInterface> LastActor;
+	IEnemyInterface* ThisActor;
+	IEnemyInterface* LastActor;
 	FHitResult CursorHit;
 	
 	//input config

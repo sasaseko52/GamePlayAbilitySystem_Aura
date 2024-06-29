@@ -185,8 +185,14 @@ void UMyAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Dam
 {
 	if(Props.SourceCharacter != Props.TargetCharacter)
 	{
-		AAuraPlayerController* AuraPC = Cast<AAuraPlayerController>(UGameplayStatics::GetPlayerController(Props.SourceCharacter,0));
-		if(AuraPC)
+		//Show Character Damage to Other
+		if(AAuraPlayerController* AuraPC = Cast<AAuraPlayerController>(Props.SourceCharacter->Controller))
+		{
+			AuraPC->ShowDamageNubmer(DamageText,Props.TargetCharacter,bBlockedHit,bCriticalHit);
+			return;
+		}
+		//Show Other Damage to Self
+		if(AAuraPlayerController* AuraPC = Cast<AAuraPlayerController>(Props.TargetCharacter->Controller))
 		{
 			AuraPC->ShowDamageNubmer(DamageText,Props.TargetCharacter,bBlockedHit,bCriticalHit);
 		}
