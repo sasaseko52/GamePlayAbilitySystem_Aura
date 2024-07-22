@@ -64,6 +64,7 @@ public:
 	//
 	FGameplayTag Abilities_Attack;
 	FGameplayTag Abilities_Summon;
+	FGameplayTag Abilities_Fire_FireBolt;
 
 	//Socket Tags
 
@@ -77,6 +78,9 @@ public:
 	FGameplayTag Montage_Attack_2;
 	FGameplayTag Montage_Attack_3;
 	FGameplayTag Montage_Attack_4;
+
+	// Cool Down Tags
+	FGameplayTag CoolDown_Fire_FireBolt;
 private:
 
 	static FAuraGameplayTags GameplayTags;
