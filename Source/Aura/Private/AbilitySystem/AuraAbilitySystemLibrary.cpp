@@ -4,6 +4,7 @@
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 
 #include "AuraAbilityTypes.h"
+#include "ToolContextInterfaces.h"
 #include "Game/AuraGameModeBase.h"
 #include "Inteactions/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -189,4 +190,16 @@ bool UAuraAbilitySystemLibrary::IsNotFriend(AActor* First, AActor* Second)
 	const bool Friends = BothArePlayers || BothAreEnemies;
 	
 	return !Friends;
+}
+
+int32 UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(ECharacterClass CharacterClass, int32 Level, const UObject* WorldContextObject)
+{
+	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
+	if(CharacterClassInfo == nullptr) return 0;
+	
+	FCharacterClassDefaultInfo Info = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
+
+	float XPReward = Info.XPReward.GetValueAtLevel(Level);
+
+	return static_cast<int32>(XPReward);
 }

@@ -50,4 +50,6 @@ public:
 	
 	UFUNCTION(BlueprintPure, BlueprintCallable, Category= "Aura ABility System Library|GameplayMechanics")
 	static bool IsNotFriend(AActor* First, AActor* Second);
+
+	static int32 GetXPRewardForClassAndLevel(ECharacterClass CharacterClass, int32 Level, const UObject* WorldContextObject);
 };

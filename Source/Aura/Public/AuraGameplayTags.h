@@ -40,6 +40,9 @@ public:
 	FGameplayTag Attributes_Resistance_Arcane;
 	FGameplayTag Attributes_Resistance_Physical;
 	
+	//Meta Tags
+	FGameplayTag Attributes_Meta_IncomingXP;
+	
 	//Input Tags
 	FGameplayTag InputTag_LMB;
 	FGameplayTag InputTag_RMB;
@@ -81,6 +84,8 @@ public:
 
 	// Cool Down Tags
 	FGameplayTag CoolDown_Fire_FireBolt;
+
+	
 private:
 
 	static FAuraGameplayTags GameplayTags;

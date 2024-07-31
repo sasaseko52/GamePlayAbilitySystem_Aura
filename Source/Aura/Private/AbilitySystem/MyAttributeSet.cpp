@@ -8,8 +8,8 @@
 #include "GameplayEffectExtension.h"
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
+#include "Aura/AuraLogChannels.h"
 #include "Inteactions/CombatInterface.h"
-#include "Kismet/GameplayStatics.h"
 #include "Player/AuraPlayerController.h"
 
 UMyAttributeSet::UMyAttributeSet()
@@ -139,12 +139,14 @@ void UMyAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 	if(Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(),0.f,GetMaxHealth()));
-		UE_LOG(LogTemp,Warning,TEXT("Health : %f , --> %s"),GetHealth(),*EffectProps.TargetCharacter->GetName());
+		
 	}
+	
 	if(Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
 		SetMana(FMath::Clamp(GetMana(),0.f,GetMaxMana()));
 	}
+	
 	if(Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
 	{
 		const float LocalIncomingDamage = GetIncomingDamage();
@@ -162,7 +164,7 @@ void UMyAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 				{
 					CombatInterface->Die();
 				}
-				
+				SendXPEvent(EffectProps);
 			}
 			else
 			{
@@ -178,6 +180,12 @@ void UMyAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallback
 			
 		}
 		
+	}
+	if(Data.EvaluatedData.Attribute == GetIncomingXPAttribute())
+	{
+		const float LocalIncomingXP = GetIncomingXP();
+		//SetIncomingXP(0.f);
+		UE_LOG(LogAura,Warning,TEXT("XP : %f"),LocalIncomingXP);
 	}
 	
 }
@@ -199,6 +207,23 @@ void UMyAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Dam
 				
 	}
 }
+
+void UMyAttributeSet::SendXPEvent(const FEffectProperties& Props)
+{
+	ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetCharacter);
+	if(CombatInterface)
+	{
+		const ECharacterClass TargetClass =ICombatInterface::Execute_GetCharacterClass(Props.TargetCharacter);
+		int32 XPReward = UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(TargetClass,CombatInterface->GetPlayerLevel(),Props.TargetCharacter);
+		const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
+		FGameplayEventData Payload;
+		Payload.EventTag = GameplayTags.Attributes_Meta_IncomingXP;
+		Payload.EventMagnitude = XPReward;
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Props.SourceCharacter,GameplayTags.Attributes_Meta_IncomingXP,Payload);
+	}
+
+}
+
 void UMyAttributeSet::OnRep_Strength(const FGameplayAttributeData& OldStrength) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UMyAttributeSet,Strength,OldStrength);

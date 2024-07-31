@@ -190,6 +190,11 @@ public:
 	FGameplayAttributeData IncomingDamage;
 	ATTRIBUTE_ACCESSORS(UMyAttributeSet,IncomingDamage);
 
+
+	UPROPERTY(BlueprintReadOnly, Category= "Meta Attributes")
+	FGameplayAttributeData IncomingXP;
+	ATTRIBUTE_ACCESSORS(UMyAttributeSet,IncomingXP);
+	
 	/* Resistance Attributes*/
 
 	UPROPERTY(BlueprintReadOnly,ReplicatedUsing= OnRep_FireResistance,Category= "Resistacne Attributes")
@@ -224,4 +229,6 @@ private:
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props);
 	
 	void ShowFloatingText(const FEffectProperties& Props,float DamageText, bool bBlockedHit, bool bCriticalHit);
+
+	void SendXPEvent(const FEffectProperties& Props);
 };
